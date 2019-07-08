@@ -152,7 +152,7 @@ run_script () {
 
 welcome_message () {
   separator () {
-    seq 1 64 | xargs printf '\-%.s' | echo $(cat)
+    seq 1 64 | xargs printf '\55%.s' | echo $(cat)
   }
 
   separator
