@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  perf-trial:
+    build: .
+    env_file: .env
+    volumes:
+      - ./data:/opt/data
+      - ./result:/opt/result
+    devices:
+      - /dev/mem:/dev/mem
