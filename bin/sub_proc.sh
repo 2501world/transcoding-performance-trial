@@ -90,6 +90,7 @@ do_transcoding () {
     ffmpeg \
       -y \
       -v error \
+      -threads 1 \
       -t "${VIDEO_DURATION}" \
       -i "${FILE}" \
       $(get_opt 4500k 1920x1080 1080p) \
