@@ -102,11 +102,12 @@ confirm_directory () {
 deflate_results () {
   cd "${RESULT_OUT_DIR}"
 
-  local ZIP_FILENAME="results_$(get_date_string).${ARCHIVE_EXT}"
-  RESULTS_FILE="${RESULT_OUT_DIR}/${ZIP_FILENAME}"
+  local ARCHIVE_FILENAME="results_$(get_date_string).${ARCHIVE_EXT}"
+  RESULTS_FILE="${RESULT_OUT_DIR}/${ARCHIVE_FILENAME}"
 
   find . \! -name "results_*.${ARCHIVE_EXT}" \! -name '.*' \
-    | xargs tar -czf "${ZIP_FILENAME}"
+    | xargs tar -czf - \
+    > "${ARCHIVE_FILENAME}"
 }
 
 generate_csv_result () {
