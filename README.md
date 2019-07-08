@@ -9,7 +9,7 @@
 ## Usage
 
 ```shell
-curl -fsSL https://raw.githubusercontent.com/2501world/transcoding-performance-trial/master/run.sh | sh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/2501world/transcoding-performance-trial/master/run.sh)"
 ```
 
 ## Requirements
