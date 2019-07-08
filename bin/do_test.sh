@@ -81,6 +81,11 @@ step_up () {
 
     step_up
   else
+    # One more push
+    VIDEO_NUM=$(( ${VIDEO_NUM} + 1 ))
+
+    do_test
+
     echo "+------------------+"
     echo "| Final result: $(printf '%2d' ${PREV_VIDEO_NUM}) |"
     echo "+------------------+"
