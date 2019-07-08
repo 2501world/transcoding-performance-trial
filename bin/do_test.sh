@@ -5,7 +5,7 @@ VIDEO_NUM=$(( ${NUM_PROCESSOR} / 2 ))
 PREV_VIDEO_NUM=${VIDEO_NUM}
 
 do_test () {
-  export TRIAL_RESULT_DIR="${RESULT_OUT_DIR}/trial_$(printf '%02d' "${VIDEO_NUM}")"
+  export TRIAL_RESULT_DIR="${CASE_RESULT_OUT_DIR}/trial_$(printf '%02d' "${VIDEO_NUM}")"
 
   call_test_proc () {
     "${BIN_DIR}/test_proc.sh" "${VIDEO_NUM}"
@@ -74,6 +74,18 @@ _EOS_
     && validate_results_all
 }
 
+export_result () {
+  echo "+------------------+"
+  echo "| Final result: $(printf '%2d' ${PREV_VIDEO_NUM}) |"
+  echo "+------------------+"
+  echo
+
+  cat << _EOS_ > "${CASE_RESULT_OUT_DIR}/result.csv"
+Test Case,Final Result
+${TEST_CASE},${PREV_VIDEO_NUM}
+_EOS_
+}
+
 step_up () {
   if do_test; then
     PREV_VIDEO_NUM=${VIDEO_NUM}
@@ -86,11 +98,9 @@ step_up () {
 
     do_test
 
-    echo "+------------------+"
-    echo "| Final result: $(printf '%2d' ${PREV_VIDEO_NUM}) |"
-    echo "+------------------+"
-    echo
+    return 0
   fi
 }
 
-step_up
+step_up \
+  && export_result

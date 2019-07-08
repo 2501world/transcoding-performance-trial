@@ -20,7 +20,7 @@ This script needs following commands installed on the measuring machine.
   - `bash` is better
 * `curl`
 * `tar`
-* `gunzip`
+* `gzip`
 * `git`
   - uses `curl` instead if not installed
 * Docker-CE
@@ -45,15 +45,17 @@ You can run this script multiple times (works idempotently).
 
 ## Results
 
-This script exports 2 result files:
+This script exports a archived result file:
 
-1. A zipped file
-    - Filename: `result/results_*.zip`
-    - Contents are:
-      + Local machine information: `cpuinfo`, `meminfo`, `dmidecode`d outputs
-      + `time`d results
-2. A log file
-    - Filename: `result/log_*.log`
+* Filename: `result/results_*.zip`
+* Contents are:
+  - Local machine information: `cpuinfo`, `meminfo`, `dmidecode`d outputs
+  - `time`d results
+    + Filename: `result/case*/trial_*/time_*.json`
+  - Log files
+    + Filename: `result/case*/log_*.log`
+  - Roundup of all results
+    + Filename: `result/result_all.csv`
 
 ## Disclaimer
 

@@ -55,11 +55,10 @@ RUN apk add --update --no-cache \
     curl \
     dmidecode \
     jq \
-    x264-dev \
-    zip
+    x264-dev
 
 COPY --from=build-ffmpeg /usr/local /usr/local
 
 ADD ./bin /opt/bin
 
-CMD ["/opt/bin/main.sh"]
+ENTRYPOINT ["/opt/bin/main.sh"]

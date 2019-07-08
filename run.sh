@@ -63,8 +63,8 @@ completed_message () {
   echo
   echo 'Trial all completed.'
   echo
-  echo 'Result files are generated in:'
-  echo "    ${RESULT_OUT_DIR}"
+  echo 'Result file is generated:'
+  echo "    ${RESULTS_FILE}"
 }
 
 confirm_directory () {
@@ -97,6 +97,37 @@ confirm_directory () {
       exit 1
       ;;
   esac
+}
+
+deflate_results () {
+  cd "${RESULT_OUT_DIR}"
+
+  local ZIP_FILENAME="results_$(get_date_string).${ARCHIVE_EXT}"
+  RESULTS_FILE="${RESULT_OUT_DIR}/${ZIP_FILENAME}"
+
+  find . \! -name "results_*.${ARCHIVE_EXT}" \! -name '.*' \
+    | xargs tar -czf "${ZIP_FILENAME}"
+}
+
+generate_csv_result () {
+  local CSV_FILE="${RESULT_OUT_DIR}/result_all.csv"
+  local FILE
+  local NEED_HEADER=1
+
+  for FILE in $(find "${RESULT_OUT_DIR}" -name 'result.csv' | sort); do
+    if [ ${NEED_HEADER} -eq 1 ]; then
+      cp "${FILE}" "${CSV_FILE}"
+      NEED_HEADER=0
+    else
+      cat "${FILE}" \
+        | sed -n '2,$p' \
+        >> "${CSV_FILE}"
+    fi
+  done
+}
+
+get_date_string () {
+  date '+%FT%T%z'
 }
 
 init_git_repository () {
@@ -141,17 +172,24 @@ install_docker () {
 }
 
 run_script () {
-  get_date_string () {
-    date '+%FT%T%z'
+  run_case () {
+    local TEST_CASE="$1"
+    local CASE_RESULT_OUT_DIR="${RESULT_OUT_DIR}/case${TEST_CASE}"
+
+    mkdir -p "${CASE_RESULT_OUT_DIR}"
+
+    local LOG_FILE_NAME="log_$(get_date_string).log"
+
+    docker-compose run "${DC_SERVICE}" --case "${TEST_CASE}" \
+      | tee "${CASE_RESULT_OUT_DIR}/${LOG_FILE_NAME}" \
+      && echo "Log file generated: case${TEST_CASE}/${LOG_FILE_NAME}"
   }
 
-  mkdir -p "${RESULT_OUT_DIR}"
-
-  LOG_FILE_NAME="log_$(get_date_string).log"
-
-  docker-compose run "${DC_SERVICE}" \
-    | tee "${RESULT_OUT_DIR}/${LOG_FILE_NAME}" \
-    && echo "Log file generated:     ${LOG_FILE_NAME}"
+  run_case 01 \
+    && run_case 02 \
+    && run_case 03 \
+    && run_case 04 \
+    && run_case 05
 }
 
 welcome_message () {
@@ -172,5 +210,7 @@ welcome_message \
   && add_env_file \
   && build_container \
   && run_script \
+  && generate_csv_result \
+  && deflate_results \
   && cleanup \
   && completed_message

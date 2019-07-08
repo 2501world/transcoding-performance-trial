@@ -84,6 +84,46 @@ do_transcoding () {
       "${VIDEO_OUT_DIR}/${EXT}.mp4"
   }
 
+  get_opt_copy () {
+    echo \
+      -an \
+      -c:v copy \
+      -f flv \
+      "${VIDEO_OUT_DIR}/copy.mp4"
+  }
+
+  get_opt_case () {
+    case "${TEST_CASE}" in
+      01)
+        echo \
+          $(get_opt_copy) \
+          $(get_opt 400k 426x240 240p)
+        ;;
+      02)
+        echo \
+          $(get_opt_copy) \
+          $(get_opt 2500k 1280x720 720p)
+        ;;
+      03)
+        echo \
+          $(get_opt 2500k 1280x720 720p) \
+          $(get_opt 400k 426x240 240p)
+        ;;
+      04)
+        echo \
+          $(get_opt_copy) \
+          $(get_opt 2500k 1280x720 720p) \
+          $(get_opt 400k 426x240 240p)
+        ;;
+      05)
+        echo \
+          $(get_opt 4500k 1920x1080 1080p) \
+          $(get_opt 2500k 1280x720 720p) \
+          $(get_opt 400k 426x240 240p)
+        ;;
+    esac
+  }
+
   time \
     -f "${TIME_FMT}" \
     -o "${TRIAL_RESULT_DIR}/time_${FILE_BASENAME}.json" \
@@ -93,9 +133,7 @@ do_transcoding () {
       -threads 1 \
       -t "${VIDEO_DURATION}" \
       -i "${FILE}" \
-      $(get_opt 4500k 1920x1080 1080p) \
-      $(get_opt 2500k 1280x720 720p) \
-      $(get_opt 400k 426x240 240p)
+      $(get_opt_case)
 }
 
 prepare_out_dir () {
