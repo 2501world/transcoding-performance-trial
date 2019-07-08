@@ -10,9 +10,6 @@ REPO_ARCHIVE="${GITHUB_REPOSITORY}/archive/master.${ARCHIVE_EXT}"
 
 DC_SERVICE=perf-trial
 
-PROJECT_DIR="$(pwd)/${PROJECT_NAME}"
-RESULT_OUT_DIR="${PROJECT_DIR}/result"
-
 add_env_file () {
   local ENV_FILE="${PROJECT_DIR}/.env"
 
@@ -71,6 +68,13 @@ completed_message () {
 }
 
 confirm_directory () {
+  if [ "$(basename "$(pwd)")" = "${PROJECT_NAME}" ]; then
+    PROJECT_DIR="$(pwd)"
+  else
+    PROJECT_DIR="$(pwd)/${PROJECT_NAME}"
+  fi
+  RESULT_OUT_DIR="${PROJECT_DIR}/result"
+
   echo
 
   if [ -d "${PROJECT_DIR}" ]; then
