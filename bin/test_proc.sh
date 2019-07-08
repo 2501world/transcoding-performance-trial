@@ -14,7 +14,7 @@ call_sub_proc () {
     | xargs \
       -I% \
       -P "${VIDEO_NUM}" \
-      sh -c "${SUB_PROC} ${VIDEO_DURATION} %"
+      sh -c "${SUB_PROC} %"
 }
 
 collect_videos () {

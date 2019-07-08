@@ -1,7 +1,6 @@
 #!/bin/ash
 
-VIDEO_DURATION="$1"
-FILE="$2"
+FILE="$1"
 VIDEO_OUT_DIR="${FILE%.*}"
 FILE_BASENAME="$(basename ${VIDEO_OUT_DIR})"
 
