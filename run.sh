@@ -9,7 +9,7 @@ ARCHIVE_EXT=tar.gz
 REPO_ARCHIVE="${GITHUB_REPOSITORY}/archive/master.${ARCHIVE_EXT}"
 
 DC_SERVICE=perf-trial
-DC_TAG="${PROJECT_NAME//-/}_${DC_SERVICE}:latest"
+DC_TAG="$(echo "${PROJECT_NAME}" | sed 's/-//g')_${DC_SERVICE}:latest"
 
 add_env_file () {
   local ENV_FILE="${PROJECT_DIR}/.env"
