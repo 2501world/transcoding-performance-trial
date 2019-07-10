@@ -174,7 +174,7 @@ install_docker () {
   if command_exists docker && [ -e /var/run/docker.sock ]; then
     echo 'You already have Docker installed.'
 
-    docker version
+    sudo docker version
   else
     curl -fsSL get.docker.com \
       | sh
