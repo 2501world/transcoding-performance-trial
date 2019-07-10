@@ -36,8 +36,13 @@ collect_videos () {
   local i=0
 
   while [ $i -lt ${VIDEO_NUM_TO_GET} ]; do
-    if get_video; then
+    get_video
+    local RET=$?
+
+    if [ ${RET} -eq 0 ]; then
       i=$(( $i + 1 ))
+    elif [ ${RET} -gt 1 ]; then
+      return 1
     fi
   done
 }
@@ -73,12 +78,24 @@ get_video () {
     )"
     RET=$?
 
+    if echo "${RES}" | grep 'error' > /dev/null; then
+      RET=2
+    fi
+
     return ${RET}
   }
 
   download_video () {
-    local VIDEO_TYPE="$(get_type)"
+    local VIDEO_TYPE
     local VIDEO_TYPE_MP4="video/mp4"
+    local RET
+
+    VIDEO_TYPE="$(get_type)"
+    RET=$?
+
+    if [ ${RET} -ne 0 ]; then
+      return 2
+    fi
 
     if ! [ "${VIDEO_TYPE}" = "${VIDEO_TYPE_MP4}" ]; then
       return 1
