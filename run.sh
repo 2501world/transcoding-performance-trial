@@ -9,6 +9,7 @@ ARCHIVE_EXT=tar.gz
 REPO_ARCHIVE="${GITHUB_REPOSITORY}/archive/master.${ARCHIVE_EXT}"
 
 DC_SERVICE=perf-trial
+DC_TAG="${PROJECT_NAME//-/}_${DC_SERVICE}:latest"
 
 add_env_file () {
   local ENV_FILE="${PROJECT_DIR}/.env"
@@ -29,8 +30,14 @@ add_env_file () {
   }
 
   set_tz () {
+    local BIN_CMD=strings
+
+    if ! command_exists ${BIN_CMD}; then
+      BIN_CMD=cat
+    fi
+
     if [ -e /etc/localtime ]; then
-      echo "TZ=$(strings /etc/localtime | tail -1)" > "${ENV_FILE}"
+      echo "TZ=$(${BIN_CMD} /etc/localtime | tail -1)" > "${ENV_FILE}"
     fi
   }
 
@@ -44,7 +51,9 @@ add_env_file () {
 }
 
 build_container () {
-  docker-compose build
+  sudo docker image build \
+    --tag "${DC_TAG}" \
+    .
 }
 
 cd_dir () {
@@ -52,7 +61,7 @@ cd_dir () {
 }
 
 cleanup () {
-  docker-compose down
+  sudo docker container prune -f
 }
 
 command_exists () {
@@ -181,7 +190,16 @@ run_script () {
 
     local LOG_FILE_NAME="log_$(get_date_string).log"
 
-    docker-compose run "${DC_SERVICE}" --case "${TEST_CASE}" \
+    sudo docker container run \
+      --device /dev/mem:/dev/mem \
+      --env-file .env \
+      --interactive \
+      --privileged \
+      --tty \
+      --volume "$(pwd)/data:/opt/data" \
+      --volume "$(pwd)/result:/opt/result" \
+      "${DC_TAG}" \
+        --case "${TEST_CASE}" \
       | tee "${CASE_RESULT_OUT_DIR}/${LOG_FILE_NAME}" \
       && echo "Log file generated: case${TEST_CASE}/${LOG_FILE_NAME}"
   }
