@@ -9,3 +9,4 @@ services:
       - ./result:/opt/result
     devices:
       - /dev/mem:/dev/mem
+    privileged: true
